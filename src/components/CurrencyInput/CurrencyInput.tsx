@@ -19,6 +19,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   setAmount,
   placeholder = 'Choose currency',
   errorMessage,
+  disabledAmountInput = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -28,7 +29,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
   const debouncedSearchText = useDebounce(searchText, 300)
 
   const handleAmountChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setAmount(+e.target.value)
+    setAmount?.(+e.target.value)
   }
 
   const handleSearchTextChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -67,7 +68,7 @@ const CurrencyInput: FC<CurrencyInputProps> = ({
 
   return (
     <CurrencyInputWrapper isOpen={isOpen} ref={ref}>
-      {!isOpen && <input type='text' value={amount} onChange={handleAmountChange} />}
+      {!isOpen && <input type='text' disabled={disabledAmountInput} value={amount} onChange={handleAmountChange} />}
       {isOpen && (
         <SearchInputWrapper>
           <input type='text' value={searchText} onChange={handleSearchTextChange} />

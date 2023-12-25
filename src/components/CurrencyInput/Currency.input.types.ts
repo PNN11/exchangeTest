@@ -2,12 +2,13 @@ import { Currency } from '../../services/api/change.types'
 
 export type CurrencyInputProps = {
   amount: string
-  setAmount: (value: number) => void
+  setAmount?: (value: number) => void
   activeCurrency?: Currency
   setActiveCurrency: (value: Currency) => void
   options: Currency[]
   placeholder?: string
   errorMessage?: string
+  disabledAmountInput?: boolean
 }
 
 export type DropdownWrapperProps = {

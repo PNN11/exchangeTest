@@ -13,7 +13,6 @@ import useDebounce from '../../hooks/useDebounce'
 const ExchangeForm: FC = () => {
   const [fromCurrency, setFromCurrency] = useState<Currency>()
   const [fromAmount, setFromAmount] = useState(0)
-  const [toAmount, setToAmount] = useState(0)
   const [toCurrency, setToCurrency] = useState<Currency>()
   const [address, setAddress] = useState('')
 
@@ -38,7 +37,7 @@ const ExchangeForm: FC = () => {
     enabled: isRequestsForMinAndEstAmountEnabled,
   })
 
-  const isInvalidValue = !!minimalFromAmount?.minAmount && fromAmount < minimalFromAmount?.minAmount
+  const isInvalidValue = useDebounce(!!minimalFromAmount?.minAmount && fromAmount < minimalFromAmount?.minAmount, 300)
 
   const { data: estimatedAmount } = useQuery({
     queryKey: ['estimated-exchange-to-amount', fromCurrency, toCurrency, debouncedFromAmount],
@@ -60,10 +59,6 @@ const ExchangeForm: FC = () => {
     if (minimalFromAmount?.minAmount) setFromAmount(minimalFromAmount?.minAmount)
   }, [minimalFromAmount])
 
-  useEffect(() => {
-    if (estimatedAmount?.toAmount) setToAmount(estimatedAmount?.toAmount)
-  }, [estimatedAmount])
-
   return (
     <ExchangeFormWrapper>
       <h1>Crypto Exchange</h1>
@@ -81,9 +76,9 @@ const ExchangeForm: FC = () => {
         <CurrencyInput
           options={allCurrencies}
           activeCurrency={toCurrency}
-          amount={isInvalidValue ? '-' : toAmount.toString()}
-          setAmount={setToAmount}
+          amount={isInvalidValue ? '-' : (estimatedAmount?.toAmount ?? 0).toString()}
           setActiveCurrency={setToCurrency}
+          disabledAmountInput
         />
       </CurrencyInputsWrapper>
       <AddressInputWrapper>
